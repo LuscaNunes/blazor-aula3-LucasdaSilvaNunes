@@ -1,33 +1,30 @@
 ﻿@page "/produtos"
 
-<h3 class="mb-4">Produtos</h3>
 <div class="row">
-<input @bind="nome" />
-<input type="number" @bind="preco" />
-<input type="number" @bind="quantidade" />
-<button class="btn btn-primary" @onclick="AdicionarProduto">Adicionar produto</button>
-<ul>
-	@foreach (var p in produtos)
-	{
-		<li>@p.Nome: R$@p.Preco</li>
-	}
-</ul>
+    
+    <div class="col-md-4">
+        <Cartao Titulo="Cadastrar Novo Produto">
+            <FormProduto OnProdutoAdicionado="AdicionarNaLista" />
+        </Cartao>
+    </div>
+
+    <div class="col-md-8">
+        @if (listaProdutos.Count == 0)
+        {
+            <div class="alert alert-info">Nenhum produto cadastrado ainda.</div>
+        }
+        else
+        {
+            <TabelaProdutos Produtos="listaProdutos" />
+        }
+    </div>
 </div>
+
 @code {
-	private string nome = "";
-	private decimal preco;
-	private int quantidade;
+    private List<Produto> listaProdutos = new();
 
-	private List<Produto> produtos = new();
-
-	private void AdicionarProduto()
-	{
-		produtos.Add(new Produto
-		{
-			Nome = nome,
-			Preco = preco
-		});
-		nome = "";
-		preco = 0;
-	}
+    private void AdicionarNaLista(Produto produtoRecebido)
+    {
+        listaProdutos.Add(produtoRecebido);
+    }
 }
