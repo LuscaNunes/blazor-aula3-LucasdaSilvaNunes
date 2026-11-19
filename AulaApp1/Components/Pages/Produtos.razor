@@ -1,17 +1,24 @@
 ﻿@page "/produtos"
+@using AulaApp1.Data
+@using Microsoft.EntityFrameworkCore
+@inject IDbContextFactory<AppDbContext> DbFactory
 
 <div class="row">
     
     <div class="col-md-4">
         <Cartao Titulo="Cadastrar Novo Produto">
-            <FormProduto OnProdutoAdicionado="AdicionarNaLista" />
+            <FormProduto OnProdutoAdicionado="AdicionarNoBanco" />
         </Cartao>
     </div>
 
     <div class="col-md-8">
-        @if (listaProdutos.Count == 0)
+        @if (listaProdutos == null)
         {
-            <div class="alert alert-info">Nenhum produto cadastrado ainda.</div>
+            <p>Carregando banco de dados...</p>
+        }
+        else if (listaProdutos.Count == 0)
+        {
+            <div class="alert alert-info">Nenhum produto cadastrado no banco ainda.</div>
         }
         else
         {
@@ -21,10 +28,31 @@
 </div>
 
 @code {
-    private List<Produto> listaProdutos = new();
+    private List<Produto>? listaProdutos;
 
-    private void AdicionarNaLista(Produto produtoRecebido)
+    // Dispara assim que a página é acessada
+    protected override async Task OnInitializedAsync()
     {
-        listaProdutos.Add(produtoRecebido);
+        await CarregarDoBanco();
+    }
+
+    // SELECT * FROM Produtos
+    private async Task CarregarDoBanco()
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        listaProdutos = await context.Produtos.ToListAsync();
+    }
+
+    // INSERT INTO Produtos
+    private async Task AdicionarNoBanco(Produto produtoRecebido)
+    {
+        using var context = await DbFactory.CreateDbContextAsync();
+        context.Produtos.Add(produtoRecebido);
+        
+        // É este comando que escreve fisicamente no HD e salva no MySQL!
+        await context.SaveChangesAsync(); 
+
+        // Atualiza a tabela na tela
+        await CarregarDoBanco();
     }
 }

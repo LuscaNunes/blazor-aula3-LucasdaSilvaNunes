@@ -4,6 +4,7 @@ namespace AulaApp1.Components.Models
 {
     public class Produto
     {
+        public int Id { get; set; }
         [Required(ErrorMessage = "Informe o nozme.")]
         public string Nome { get; set; } = "";
 

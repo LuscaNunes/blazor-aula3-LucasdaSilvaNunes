@@ -1,4 +1,6 @@
 using AulaApp1.Components;
+using Microsoft.EntityFrameworkCore;
+using AulaApp1.Data;
 
 namespace AulaApp1
 {
@@ -11,6 +13,13 @@ namespace AulaApp1
             // Add services to the container.
             builder.Services.AddRazorComponents()
                 .AddInteractiveServerComponents();
+
+            // 1. Pega a string de conexão do appsettings.json
+            var connectionString = builder.Configuration.GetConnectionString("ConexaoLoja");
+
+            // 2. Registra o contexto do banco de dados usando a fábrica (IDbContextFactory)
+            builder.Services.AddDbContextFactory<AppDbContext>(options =>
+                options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
 
             var app = builder.Build();
 
