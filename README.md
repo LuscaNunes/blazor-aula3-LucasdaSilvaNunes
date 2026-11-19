@@ -1,0 +1,1 @@
+O FormProduto não adiciona o produto direto na lista para manter o princípio de responsabilidade única, permitindo que ele seja reaproveitado em outras telas sem depender de uma lista específica. Quem adiciona o produto na lista é o componente pai (Produtos.razor), que fica sabendo do cadastro porque o filho o avisa disparando o evento através do EventCallback.
